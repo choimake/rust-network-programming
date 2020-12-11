@@ -8,6 +8,7 @@ extern crate log;
 
 // 外部moduleの読み込み
 mod tcp_server;
+mod tcp_client;
 
 fn main() {
     env::set_var("RUST_LOG", "debug");
@@ -32,6 +33,9 @@ fn main() {
                 // ?演算子はOkなら中の値を返し、Errなら「即座」に値をreturnする
                 // url: https://qiita.com/nirasan/items/321e7cc42e0e0f238254
                 tcp_server::serve(address).unwrap_or_else(|e| error!("{}", e));
+            }
+            "client" => {
+                tcp_client::connect(address).unwrap_or_else(|e| error!("{}", e));
             }
             _ => {
                 missing_role();
