@@ -6,6 +6,9 @@ use std::env;
 // url: https://doc.rust-jp.rs/rust-by-example-ja/crates/link.html
 extern crate log;
 
+// 外部moduleの読み込み
+mod tcp_server;
+
 fn main() {
     env::set_var("RUST_LOG", "debug");
     env_logger::init();
@@ -24,7 +27,11 @@ fn main() {
     match protocol {
         "tcp" => match role {
             "server" => {
-                println!("tcp server");
+                // unwrap_or_else
+                // エラー時にpanicを返すのではなく、クロージャーで実行した値を返す
+                // ?演算子はOkなら中の値を返し、Errなら「即座」に値をreturnする
+                // url: https://qiita.com/nirasan/items/321e7cc42e0e0f238254
+                tcp_server::serve(address).unwrap_or_else(|e| error!("{}", e));
             }
             _ => {
                 missing_role();
