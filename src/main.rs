@@ -9,6 +9,8 @@ extern crate log;
 // 外部moduleの読み込み
 mod tcp_server;
 mod tcp_client;
+mod udp_server;
+mod udp_client;
 
 fn main() {
     env::set_var("RUST_LOG", "debug");
@@ -41,6 +43,17 @@ fn main() {
                 missing_role();
             }
         }
+        "udp" => match role {
+            "server" => {
+                udp_server::serve(address).unwrap_or_else(|e| error!("{}", e));
+            }
+            "client" => {
+                udp_client::communicate(address).unwrap_or_else(|e| error!("{}", e));
+            }
+            _ => {
+                missing_role();
+            }
+        }
         _ => {
             error!("Please specify tcp or udp on the 1st argument.");
             std::process::exit(1);
@@ -49,7 +62,7 @@ fn main() {
 }
 
 // roleが不正な値であるときにエラーを出す
-fn missing_role(){
+fn missing_role() {
     error!("Please specify server or client on the 2nd argument.");
     std::process::exit(1);
 }
